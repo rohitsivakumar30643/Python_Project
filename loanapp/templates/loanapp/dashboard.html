@@ -1,0 +1,164 @@
+{% extends 'loanapp/base.html' %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-5 fade-up">
+    <div>
+        <div class="d-flex align-items-center gap-3 mb-1">
+            <h1 class="fw-bold mb-0" style="letter-spacing: -1.5px; color: #0f172a;">Financial Summary</h1>
+            
+            {% if user.is_staff %}
+                <span class="badge d-flex align-items-center gap-1 px-3 py-2 rounded-pill" 
+                      style="background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%); color: #991b1b; border: 1px solid #f87171;">
+                    <i class="bi bi-shield-lock-fill fs-6"></i>
+                    <span style="font-size: 0.75rem; letter-spacing: 1px; font-weight: 800;">ADMIN</span>
+                </span>
+            {% else %}
+                <span class="badge d-flex align-items-center gap-1 px-3 py-2 rounded-pill" 
+                      style="background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%); color: #075985; border: 1px solid #38bdf8;">
+                    <i class="bi bi-person-fill fs-6"></i>
+                    <span style="font-size: 0.75rem; letter-spacing: 1px; font-weight: 800;">BORROWER</span>
+                </span>
+            {% endif %}
+        </div>
+        <p class="text-muted mb-0"></p>
+    </div>
+    
+    {% if not user.is_staff %}
+    <a href="{% url 'apply_loan' %}" class="btn btn-primary rounded-pill px-4 py-2 shadow-lg fw-bold transition-all">
+        <i class="bi bi-plus-lg me-1"></i> New Application
+    </a>
+    {% endif %}
+</div>
+
+<div class="row g-4 mb-5 text-center">
+    <div class="col-6 col-md-3">
+        <div class="card border-0 shadow-sm p-4 rounded-4 info-card">
+            <div class="icon-circle bg-primary bg-opacity-10 text-primary mb-3 mx-auto">
+                <i class="bi bi-activity fs-4"></i>
+            </div>
+            <small class="text-muted text-uppercase fw-bold ls-1">Active Loans</small>
+            <h2 class="fw-800 mt-2 mb-0">{{ approved_loans }}</h2>
+        </div>
+    </div>
+    
+    <div class="col-6 col-md-3">
+        <div class="card border-0 shadow-sm p-4 rounded-4 info-card border-bottom border-success border-4">
+            <div class="icon-circle bg-success bg-opacity-10 text-success mb-3 mx-auto">
+                <i class="bi bi-cash-stack fs-4"></i>
+            </div>
+            <small class="text-muted text-uppercase fw-bold ls-1">{% if user.is_staff %}Total Collected{% else %}Your Payments{% endif %}</small>
+            <h2 class="fw-800 mt-2 mb-0 text-success">₹{{ total_collected }}</h2>
+        </div>
+    </div>
+    
+    <div class="col-6 col-md-3">
+        <div class="card border-0 shadow-sm p-4 rounded-4 info-card">
+            <div class="icon-circle bg-info bg-opacity-10 text-info mb-3 mx-auto">
+                <i class="bi bi-journal-check fs-4"></i>
+            </div>
+            <small class="text-muted text-uppercase fw-bold ls-1">Completed</small>
+            <h2 class="fw-800 mt-2 mb-0">{{ closed_loans }}</h2>
+        </div>
+    </div>
+    
+    <div class="col-6 col-md-3">
+        <div class="card border-0 shadow-sm p-4 rounded-4 info-card bg-dark text-white">
+            <div class="icon-circle bg-white bg-opacity-10 text-white mb-3 mx-auto">
+                <i class="bi bi-clipboard-data fs-4"></i>
+            </div>
+            <small class="text-white-50 text-uppercase fw-bold ls-1">Requests</small>
+            <h2 class="fw-800 mt-2 mb-0">{{ total_loans }}</h2>
+        </div>
+    </div>
+</div>
+
+<div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+    <div class="card-header bg-white border-bottom py-3 px-4 d-flex justify-content-between align-items-center">
+        <h5 class="fw-bold mb-0 text-dark">Loan Portfolio Records</h5>
+        <span class="badge bg-light text-muted rounded-pill px-3 border">Scrollable List</span>
+    </div>
+    
+    <div class="table-container" style="max-height: 400px; overflow-y: auto;">
+        <table class="table align-middle mb-0 table-hover">
+            <thead class="bg-light sticky-top" style="z-index: 10;">
+                <tr class="text-muted small uppercase">
+                    <th class="ps-4 py-3">#</th>
+                    {% if user.is_staff %}<th>Borrower Name</th>{% endif %}
+                    <th>Principal Amount</th>
+                    <th>Current Status</th>
+                    <th class="text-end pe-4">Manage</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for loan in loans %}
+                <tr>
+                    <td class="ps-4">
+                        <span class="fw-bold text-primary">{{ forloop.counter }}</span>
+                    </td>
+                    {% if user.is_staff %}
+                        <td class="fw-semibold">{{ loan.borrower.username }}</td>
+                    {% endif %}
+                    <td class="fw-bold text-dark">₹{{ loan.amount }}</td>
+                    <td>
+                        <span class="status-badge status-{{ loan.status|lower }} px-3 py-1 rounded-pill small fw-bold">
+                            {{ loan.status }}
+                        </span>
+                    </td>
+                    <td class="text-end pe-4">
+                        <a href="{% url 'loan_detail' loan.id %}" class="btn btn-sm btn-outline-dark rounded-pill px-3 fw-bold">
+                            View <i class="bi bi-arrow-right-short ms-1"></i>
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center py-5 text-muted">No records found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<style>
+    /* Custom Modern Scrollbar */
+    .table-container::-webkit-scrollbar {
+        width: 8px;
+    }
+    .table-container::-webkit-scrollbar-track {
+        background: #f8fafc;
+    }
+    .table-container::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 10px;
+        border: 2px solid #f8fafc;
+    }
+    .table-container::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8;
+    }
+
+    .fw-800 { font-weight: 800; }
+    .ls-1 { letter-spacing: 0.5px; font-size: 0.7rem; }
+    
+    .icon-circle {
+        width: 44px;
+        height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 12px;
+    }
+
+    .info-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .info-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px -5px rgba(0, 0, 0, 0.1) !important;
+    }
+
+    .status-approved { background: #dcfce7 !important; color: #166534 !important; }
+    .status-pending { background: #fef3c7 !important; color: #92400e !important; }
+    .status-rejected { background: #fee2e2 !important; color: #991b1b !important; }
+    .status-closed { background: #f1f5f9 !important; color: #475569 !important; }
+</style>
+{% endblock %}

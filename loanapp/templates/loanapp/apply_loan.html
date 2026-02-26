@@ -1,0 +1,59 @@
+{% extends 'loanapp/base.html' %}
+
+{% block content %}
+<section class="page-head fade-up">
+    <div class="page-kicker">Application</div>
+    <h1 class="page-title">Apply For A New Loan</h1>
+    <p class="muted-copy mb-0">Submit your amount, interest preference, and tenure to create a new request.</p>
+</section>
+
+<section class="row g-4">
+    <div class="col-lg-7">
+        <div class="surface-card surface-card-lg p-3 p-md-4 fade-up stagger-1">
+            <h5 class="mb-3">Loan Application Form</h5>
+
+            {% if form.errors %}
+                <div class="alert alert-danger border-0">
+                    {% for field in form %}
+                        {% for error in field.errors %}
+                            <div>{{ error }}</div>
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <form method="post" class="row g-3">
+                {% csrf_token %}
+                <div class="col-12">
+                    <label class="form-label fw-semibold">Loan Amount (₹)</label>
+                    {{ form.amount }}
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">Interest Rate (%)</label>
+                    {{ form.interest_rate }}
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">Tenure (Months)</label>
+                    {{ form.tenure_months }}
+                </div>
+                <div class="col-12 d-flex gap-2 mt-2">
+                    <button type="submit" class="btn btn-primary rounded-pill px-4">Submit Application</button>
+                    <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary rounded-pill px-4">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="col-lg-5">
+        <div class="info-panel fade-up stagger-2">
+            <h5 class="mb-3">Before You Submit</h5>
+            <ul class="list-clean">
+                <li>Choose an amount you can comfortably repay.</li>
+                <li>Lower tenure reduces total interest over time.</li>
+                <li>Use realistic interest values for accurate EMI.</li>
+                <li>Once approved, repay regularly to close faster.</li>
+            </ul>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,44 @@
+{% extends 'loanapp/base.html' %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-5">
+        <div class="card">
+            <div class="card-body p-4">
+                <div class="text-center mb-4">
+                    <div class="bg-primary bg-opacity-10 rounded-circle d-inline-block p-3 mb-2">
+                        <i class="bi bi-wallet2 text-primary h4"></i>
+                    </div>
+                    <h4 class="fw-bold">Repayment Portal</h4>
+                </div>
+                
+                <div class="bg-light p-3 rounded-3 mb-4">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted small">Current Balance</span>
+                        <span class="fw-bold">₹{{ loan.remaining_balance }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted small">Monthly Interest</span>
+                        <span class="fw-bold">₹{{ monthly_interest }}</span>
+                    </div>
+                    <hr class="my-2">
+                    <div class="d-flex justify-content-between text-primary fw-bold">
+                        <span>Total Payable</span>
+                        <span>₹{{ total_to_close }}</span>
+                    </div>
+                </div>
+
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold">Amount to Pay</label>
+                        {{ form.amount_paid }}
+                        <div class="text-danger mt-1 small">{{ form.amount_paid.errors }}</div>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100 py-2 fw-bold rounded-pill">Confirm Payment</button>
+                    <a href="{% url 'loan_detail' loan.id %}" class="btn btn-link w-100 text-muted mt-2 text-decoration-none">Back</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
