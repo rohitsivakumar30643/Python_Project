@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-46bfe99o=#kww8uq00@#wj9b&n*jnp7b^w#5i^5hvt-=dc+h3r
 DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
-
+DEBUG = True
 
 # Application definition
 
@@ -122,3 +122,4 @@ LOGOUT_REDIRECT_URL = 'login'
 LOGIN_URL = 'login'
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 SESSION_COOKIE_AGE = 3600
+STATIC_ROOT = "staticfiles"
